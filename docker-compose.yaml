@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  bitcoin-core-regtest:
+    build:
+      context: .
+      args:
+        TARGETPLATFORM: "linux/arm64"
+    volumes:
+      - ./btc/:/home/bitcoin/.bitcoin
+    command:
+      -printtoconsole
+      -regtest=1
