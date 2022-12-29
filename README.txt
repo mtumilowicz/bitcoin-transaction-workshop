@@ -367,36 +367,47 @@ one of the keys controlled by that wallet
         * less safe than a hardware wallet as they can be hacked, however they are usually more user-friendly, and less likely to be lost
 
 ## workshops
-* https://github.com/BlockchainCommons/Learning-Bitcoin-from-the-Command-Line/blob/8598756ae138608b21082d210f4f638a4507c67d/A3_0_Using_Bitcoin_Regtest.md#generate-blocks
-* docker-compose up bitcoin-core-regtest -d
-* log into a container: docker-compose exec --user bitcoin bitcoin-core-regtest sh
-* create wallets
-    * bitcoin-cli -regtest createwallet "iago"
-    * bitcoin-cli -regtest createwallet "jafar"
-    * verify that list of addresses are empty
-        * bitcoin-cli -regtest -rpcwallet=iago listreceivedbyaddress 1 true
-* create addresses for each wallet
-    * bitcoin-cli -regtest -rpcwallet=iago getnewaddress
-    * bitcoin-cli -regtest -rpcwallet=jafar getnewaddress
-    * verify that addresses are created correctly
-        * bitcoin-cli -regtest -rpcwallet=jafar getnewaddress
-* inspect `/btc` dir (in the root of this project)
-* send 50 btc to one of the wallets
+* observation
     * https://github.com/BlockchainCommons/Learning-Bitcoin-from-the-Command-Line/blob/8598756ae138608b21082d210f4f638a4507c67d/A3_0_Using_Bitcoin_Regtest.md#generate-blocks
-    * bitcoin-cli -regtest generatetoaddress 101 bcrt1q7c6h8a4n6tvmkfcwhpe9gvpefgyfec2t75vwru
-    * verify balance: bitcoin-cli -regtest -rpcwallet=iago getbalance
-* transfer coins from one wallet to another
-    * bitcoin-cli -regtest -rpcwallet=iago -named sendtoaddress \
-        address=bcrt1qj28d8v3528ygqpjt2dp436sx3dhn7x5qwxnyc9 \
-        amount=15 \
-        fee_rate=1000
-      d153b10e8eb4b348ab384e1888984c73f7dfc47508a1953eab3b63da65094a76
-    * verify the transaction details
-        * bitcoin-cli -regtest -rpcwallet=iago gettransaction d153b10e8eb4b348ab384e1888984c73f7dfc47508a1953eab3b63da65094a76
-* verify target account balance
-    * bitcoin-cli -regtest -rpcwallet=jafar getbalance
-    * bitcoin-cli -regtest -rpcwallet=jafar getunconfirmedbalance
-    * mine block (RegTest requires at least one confirmation)
-        * bitcoin-cli -regtest -rpcwallet=iago -generate 1
-        * verify transaction details once again (take a look at confirmations)
-            * bitcoin-cli -regtest -rpcwallet=iago gettransaction d153b10e8eb4b348ab384e1888984c73f7dfc47508a1953eab3b63da65094a76
+    * a block must have 100 confirmations before that reward can be spent, you generate 101 blocks
+* steps
+    * `docker-compose up bitcoin-core-regtest -d`
+    * log into a container
+        * `docker-compose exec --user bitcoin bitcoin-core-regtest sh`
+    * create wallets
+        * `bitcoin-cli -regtest createwallet "iago"`
+        * `bitcoin-cli -regtest createwallet "jafar"`
+        * verify that list of addresses are empty
+            * `bitcoin-cli -regtest -rpcwallet=iago listreceivedbyaddress 1 true`
+    * create addresses for each wallet
+        * `bitcoin-cli -regtest -rpcwallet=iago getnewaddress`
+        * `bitcoin-cli -regtest -rpcwallet=jafar getnewaddress`
+        * verify that addresses are created correctly
+            * `bitcoin-cli -regtest -rpcwallet=jafar getnewaddress`
+    * inspect `/btc` dir (in the root of this project)
+        * you should see wallets, blocks etc
+    * send 50 btc to one of the wallets
+        * remember to use generated address for "iago" wallet
+        * `bitcoin-cli -regtest generatetoaddress 101 bcrt1q7c6h8a4n6tvmkfcwhpe9gvpefgyfec2t75vwru`
+        * verify balance: bitcoin-cli -regtest -rpcwallet=iago getbalance
+    * transfer coins from one wallet to another
+        * remember to use generated address for "jafar" wallet
+        * command
+            ```
+            bitcoin-cli -regtest -rpcwallet=iago -named sendtoaddress \
+                address=bcrt1q65rk79n8tlvsv9wcrr4ppu2slhwdarnnwtwsjf \
+                amount=15 \
+                fee_rate=1000
+            ```
+            output is txid
+        * verify the transaction details
+            * remember to put txid that is output from previous command
+            * `bitcoin-cli -regtest -rpcwallet=iago gettransaction d153b10e8eb4b348ab384e1888984c73f7dfc47508a1953eab3b63da65094a76`
+    * verify target account balance
+        * `bitcoin-cli -regtest -rpcwallet=jafar getbalance`
+        * `bitcoin-cli -regtest -rpcwallet=jafar getunconfirmedbalance`
+        * mine block (RegTest requires at least one confirmation)
+            * `bitcoin-cli -regtest -rpcwallet=iago -generate 1`
+            * verify transaction details once again (take a look at confirmations)
+                * remember to put txid that is output from the transfer command
+                * `bitcoin-cli -regtest -rpcwallet=iago gettransaction d153b10e8eb4b348ab384e1888984c73f7dfc47508a1953eab3b63da65094a76`
