@@ -288,17 +288,21 @@
         * use case
             * attacker can intercept a normal transaction and distribute the modified version through the network
             * with some probability the miners will include this modified transaction instead of the original one
-            * MtGox exchange in 2013
-                * an attacker was withdrawing the funds from the exchange, intercepting the transaction, and changing its txid
-                * the transaction was still valid and the attacker got the bitcoins
-                * but the exchange saw that txid was never included in the block and did not decrease the attackers balance
-        * is considered to be one of the largest ongoing threats to blockchain technology
-            * known to the Bitcoin community in 2011
-            * in February 2014, Japanese Bitcoin exchange Mt. Gox revealed that they had been targeted by
-            an exploit in Bitcoin protocol called "Transaction Malleability"
+        * transaction chains in one block
+            * one can transfer funds from A to B. And then, without waiting for any confirmations, transfer
+            bitcoins from B to C
+                * if txid of the first transaction can change, the Previous tx field of the second transaction
+                should also change
+                * it means that the second transaction can only be created when the first transaction is
+                included in a block (and therefore its txid is fixed)
+        * MtGox exchange in 2013
+            * an attacker was withdrawing the funds from the exchange, intercepting the transaction, and changing its txid
+            * the transaction was still valid and the attacker got the bitcoins
+            * but the exchange saw that txid was never included in the block and did not decrease the attackers balance
     * scalability
         * Bitcoin network takes around 10 minutes on average to validate every new block
         * therefore, the block size plays a crucial role in determining the number of transactions each block can confirm
+        * more than half of the data is scriptSig
 * is basically a protocol upgrade for the Bitcoin blockchain network
     * primary idea behind the working of Segregated Witness focuses on reorganizing block data
     * by applying SegWit, you would separate signatures from transaction data
@@ -306,66 +310,36 @@
     * separates a transaction into two sections
         * first: the wallet addresses of the sender and receiver
         * second: transaction signatures or witness data
-* SegWit: Pay-to-Witness-PubKey-Hash (P2WPKH)
-    * get raw transaction
-        * https://bitcoindata.science/bitcoin-raw-transaction-hex.html
-        * id: 8c3be55e297a9fa01b0fc70d54c2cd0ff7cf38a87c43240a70f69cde1ee6267f
-    * decoding online
-        * https://explorer.btc.com/tools/tx/decode
-        ```
-        {
-            "txid": "8c3be55e297a9fa01b0fc70d54c2cd0ff7cf38a87c43240a70f69cde1ee6267f",
-            "hash": "0f0b2400c4b1617028b3690370abace21de562c4b530a7056525a134f13ddeb1",
-            "version": 1,
-            "size": 223,
-            "vsize": 142,
-            "weight": 565,
-            "locktime": 0,
-            "vin": [
-                {
-                    "txid": "8a5788f668b2008bac0696c72697202b03b561b1ceebc09294d4786eaee5f393",
-                    "vout": 1,
-                    "scriptSig": {
-                        "asm": "",
-                        "hex": ""
-                    },
-                    "txinwitness": [
-                        "304402202f15a876202a5853618689dc3699f5d915d06ca3f7136f923278739e3931c53602202e97e87de7884710f78e77380d55e98c0c8b13e004b46440c2b98a24a18b835f01",
-                        "0323bae62386bf4148f037cfc8f242ed57edc909d8da177b28af1c2ec2119537e1"
-                    ],
-                    "sequence": 0
-                }
-            ],
-            "vout": [
-                {
-                    "value": 0.00059642,
-                    "n": 0,
-                    "scriptPubKey": {
-                        "asm": "OP_HASH160 bae8c96cbbb07347106c3375d0ec53843a4382f4 OP_EQUAL",
-                        "hex": "a914bae8c96cbbb07347106c3375d0ec53843a4382f487",
-                        "address": "3JjJUY2M5s7NXh6yM8GTfHiTFN2UyNd6aA",
-                        "type": "scripthash"
-                    }
-                },
-                {
-                    "value": 0.0004991,
-                    "n": 1,
-                    "scriptPubKey": {
-                        "asm": "0 e4ddb96b735061c802fb35710c4fdf6ea9600516",
-                        "hex": "0014e4ddb96b735061c802fb35710c4fdf6ea9600516",
-                        "address": "bc1qunwmj6mn2psusqhmx4cscn7ld65kqpgk6vqe5r",
-                        "type": "witness_v0_keyhash"
-                    }
-                }
-            ]
-        }
-        ```
-        * SegWit moves the signature outside of the transaction data
-            * motivation: reduces the size required for transaction storage
-        * soft fork
-            * its updates can be ignored
-            * to prevent old nodes from being excluded from the network (hard fork), SegWit enables old nodes
-            to see SegWit transactions as "anyone-can-spend"
+        * separating this data, we essentially allow transactions to be smaller
+            * of course this is cheating, because we still need to store all these signatures
+            * but now this data does not count towards the block size limit
+                * this was the only way to implement SegWit as a soft fork, and not a hard fork
+                    * soft fork = its updates can be ignored
+                    * hard fork = old nodes are being excluded from the network
+                    * SegWit enables old nodes to see SegWit transactions as "anyone-can-spend"
+* example
+    ![alt text](img/segwit.png)
+* lightning network
+    * problem
+        * every bitcoin transaction ever made is stored in bitcoin blockchain
+        * thousands of computers around the world are storing information about me buying coffee for 0.001 bitcoins
+            * large fees and wait for ten minutes for the confirmation of even a tiny transaction
+    * solution
+        * have some small transactions executed off the main chain, and then sometimes sync the balance
+        * called: second layer network
+        * implementation: Lightning network
+    * overview
+        1. two persons open a micropayment channel between each other, both have some amount of funds locked
+        1. they execute large number of small transactions between each other
+        1. honest behaviour is guaranteed by some very clever crypto-magic, conflicts are automatically resolved from the locked funds
+        1. as soon as the channel is closed — the locked funds are unlocked, the balances are synced to the main blockchain
+    * SegWit context
+        * makes the implementation much easier
+        * micropayment channels rely on double-signed transactions to lock the initial deposits
+            * funds from both parties are sent to one double-signed address
+            * transaction should be double-signed before any funds are actually sent there
+            * one needs to collect the outputs of transactions that were not yet synced to the main blockchain
+                * it's exactly what we described in "transaction chains in one block"
 
 ## wallet
 * user’s wallet has "received" bitcoin = wallet has detected a UTXO that can be spent with
