@@ -21,6 +21,8 @@
     * https://en.bitcoinwiki.org/wiki/Transaction_Malleability
     * https://101blockchains.com/segregated-witness/
     * https://medium.com/lightningto-me/bitcoin-transactions-malleability-segwit-and-scaling-258af8ed9cbf
+    * https://medium.com/stably-blog/what-is-a-crypto-wallet-7363d3118ce5
+    * https://medium.com/blockchain/crypto-wallets-explained-f9199e621366
 
 ## transaction
 * exemplary transaction
@@ -342,20 +344,27 @@
                 * it's exactly what we described in "transaction chains in one block"
 
 ## wallet
+* store the keys that enable you to access your cryptocurrencies
+* cryptocurrencies don’t physically sit in crypto wallet
+* crypto wallets consist of three parts: a public key, a private key, and a public receiving address
+* whenever someone sends crypto from their wallet, they must use their private key to "sign", or confirm, the transaction
+* concept of a balance is created by the wallet application
+* calculates the user’s balance by scanning the blockchain and aggregating the value of any UTXO
+the wallet can spend with the keys it controls
+    * uses a database service to store a quick reference set of all the UTXO they can spend with the keys they control
 * user’s wallet has "received" bitcoin = wallet has detected a UTXO that can be spent with
 one of the keys controlled by that wallet
-* user’s bitcoin "balance" = sum of all UTXO that user’s wallet can spend
-  * may be scattered among hundreds of transactions and hundreds of blocks
-* The concept of a balance is created by the wallet application
-* The wallet calcu‐
-  lates the user’s balance by scanning the blockchain and aggregating the value of any
-  UTXO the wallet can spend with the keys it controls
-  * Most wallets maintain a data‐
-    base or use a database service to store a quick reference set of all the UTXO they can
-    spend with the keys they control.
-* several strategies to satisfy the purchase amount: combining several
-smaller units, finding exact change, or using a single unit larger
-than the transaction value and making change
+* several strategies to satisfy the purchase amount
+    * combining several smaller units
+    * finding exact change
+    * using a single unit larger than the transaction value and making change
+* types
+    * Hardware Wallet
+        * stores your coins offline and is generally considered the safest wallet type as it can’t be hacked, this is what is known as a cold wallet
+    * Software Wallet
+        * can also be called an online wallet
+        * it refers to an app or online wallet which you only need the internet in order to access
+        * less safe than a hardware wallet as they can be hacked, however they are usually more user-friendly, and less likely to be lost
 
 ## workshops
 * https://github.com/BlockchainCommons/Learning-Bitcoin-from-the-Command-Line/blob/8598756ae138608b21082d210f4f638a4507c67d/A3_0_Using_Bitcoin_Regtest.md#generate-blocks
