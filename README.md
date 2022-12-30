@@ -254,30 +254,6 @@
             * for security reasons, this was changed in 2010
                 * malformed unlocking script could push data onto the stack and corrupt the locking script
 
-## fees
-* motivation
-    * incentive to include (mine) a transaction into the next block
-        * miners prioritize transactions based on many different criteria
-        * note that transaction with insufficient or no fees might be delayed or not processed at all
-    * disincentive against abuse of the system by imposing a small cost on every transaction
-        * making it economically infeasible for attackers to flood the network with transactions
-* most wallets calculate and include transaction fees automatically
-    * dynamic fees
-        * example
-            * https://bitcoinfees.earn.com/
-            * https://bitcoinfees.earn.com/api/v1/fees/recommended
-        * calculated based on
-            * size of the transaction in kilobytes
-            * fees offered by "competing" transactions
-* data structure of transactions does not have a field for fees
-    * any excess amount that remains after all outputs have been deducted from all inputs
-    * fee = sum(inputs) – sum(outputs)
-    * example
-        * input: 10-bitcoin UTXO
-        * output: 1-bitcoin
-        * change 9-bitcoin
-            * otherwise 9-bitcoin "leftover" will be collected by the miner
-
 ## SegWit (Segregated Witness)
 * problem with old transactions
     * security
