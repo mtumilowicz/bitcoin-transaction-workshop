@@ -320,9 +320,12 @@
                 * it's exactly what we described in "transaction chains in one block"
 
 ## wallet
+* Satoshi Nakamoto defines a digital wallet as a secret and public keypair
+* may include a collection of multiple keypairs in practice
+    * it is a good practice to create new keypairs for every transaction
 * store the keys that enable you to access your cryptocurrencies
 * cryptocurrencies don’t physically sit in crypto wallet
-* crypto wallets consist of three parts: a public key, a private key, and a public receiving address
+* consist of three parts: a public key, a private key, and a public receiving address
 * whenever someone sends crypto from their wallet, they must use their private key to "sign", or confirm, the transaction
 * concept of a balance is created by the wallet application
 * calculates the user’s balance by scanning the blockchain and aggregating the value of any UTXO
