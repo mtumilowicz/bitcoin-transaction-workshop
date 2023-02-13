@@ -95,7 +95,9 @@
             * The UTXO set grows as new UTXO is created and shrinks when UTXO is consumed
     * exception: coinbase transaction
         * reason: brand-new bitcoin payable to that miner as a reward for mining
-            * does not consume UTXO => has a special type of input called the "coinbase"
+        * does not consume UTXO => it has only one input, called the coinbase, which creates "bitcoin" from nothing
+        * has one output, payable to the miner’s own bitcoin address
+        * do not have an unlocking script (aka, scriptSig) field
         * first transaction in each block
 * indivisible units - unspent output can only be consumed in its entirety
     * however, bitcoin can be divided down to eight decimal places as satoshis
